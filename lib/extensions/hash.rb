@@ -2,6 +2,10 @@
 
 class Hash
   def self.zip(keys,values) # from Facets of Ruby library
-    (keys.zip(values)).to_h
+    if self.respond_to? :to_h
+      (keys.zip(values)).to_h
+    else
+      Hash[*(headerA.zip(dataA)).flatten]
+    end
   end
 end
