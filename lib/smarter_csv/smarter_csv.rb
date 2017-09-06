@@ -128,15 +128,15 @@ module SmarterCSV
         if (line =~ %r{#{options[:quote_char]}}) and (! options[:force_simple_split])
           dataA = begin
             CSV.parse( line, csv_options ).flatten
-            collect!{|x| x.nil? ? '' : x} if !options[:keep_nils_nil] # to deal with nil values from CSV.parse
           rescue CSV::MalformedCSVError => e
             raise $!, "#{$!} [SmarterCSV: csv line #{csv_line_count}]", $!.backtrace
           end
+          dataA.collect!{|x| x.nil? ? '' : x} if !options[:keep_nils_nil] # to deal with nil values from CSV.parse
         else
           dataA =  line.split(options[:col_sep])
         end
-        dataA.map!{|x| x.gsub(%r/options[:quote_char]/,'') }
-        dataA.map!{|x| x.strip}  if options[:strip_whitespace]
+        dataA.map!{|x| x.gsub(%r/options[:quote_char]/,'') if !x.nil?}
+        dataA.map!{|x| x.strip if !x.nil?}  if options[:strip_whitespace]
         hash = Hash.zip(headerA,dataA)  # from Facets of Ruby library
         # make sure we delete any key/value pairs from the hash, which the user wanted to delete:
         # Note: Ruby < 1.9 doesn't allow empty symbol literals!

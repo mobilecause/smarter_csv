@@ -5,7 +5,7 @@ class Hash
     if self.respond_to? :to_h
       (keys.zip(values)).to_h
     else
-      Hash[*(headerA.zip(dataA)).flatten]
+      Hash[*(keys.zip(values)).flatten]
     end
   end
 end
