@@ -127,9 +127,12 @@ module SmarterCSV
 
         if (line =~ %r{#{options[:quote_char]}}) and (! options[:force_simple_split])
           dataA = begin
-            CSV.parse( line, csv_options ).flatten.collect!{|x| x.nil? ? '' : x} # to deal with nil values from CSV.parse
+            CSV.parse( line, csv_options ).flatten
           rescue CSV::MalformedCSVError => e
             raise $!, "#{$!} [SmarterCSV: csv line #{csv_line_count}]", $!.backtrace
+          end
+          if !options[:keep_nils_nil]
+            dataA.collect!{|x| x.nil? ? '' : x} # to deal with nil values from CSV.parse
           end
         else
           dataA =  line.split(options[:col_sep])
