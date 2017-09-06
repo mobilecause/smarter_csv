@@ -136,7 +136,11 @@ module SmarterCSV
         end
         dataA.map!{|x| x.gsub(%r/options[:quote_char]/,'') }
         dataA.map!{|x| x.strip}  if options[:strip_whitespace]
-        hash = Hash.zip(headerA,dataA)  # from Facets of Ruby library
+        if [].respond_to? :to_h
+          hash = Hash.zip(headerA,dataA)  # from Facets of Ruby library
+        else
+          hash = Hash[*(headerA.zip(dataA)).flatten]
+        end
         # make sure we delete any key/value pairs from the hash, which the user wanted to delete:
         # Note: Ruby < 1.9 doesn't allow empty symbol literals!
         hash.delete(nil); hash.delete('');
